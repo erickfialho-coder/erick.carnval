@@ -1,0 +1,113 @@
+/* ==========================================================================
+   SCRIPT DE CARNAVAL - INTERATIVIDADE E BRILHO
+   ========================================================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Inicializa os efeitos assim que a página carregar
+    gerarConfetesContinuos(30);
+    efeitoLetreiroNeon();
+});
+
+/**
+ * 1. GERADOR DE CONFETES DINÂMICOS
+ * Cria confetes de tamanhos, cores e velocidades aleatórias caindo pela tela.
+ */
+function gerarConfetesContinuos(quantidade) {
+    const coresCarnaval = ['#ff007f', '#00f0ff', '#ffd700', '#9d00ff', '#ff5500'];
+    const body = document.body;
+
+    for (let i = 0; i < quantidade; i++) {
+        criarUmConfete(coresCarnaval, body);
+    }
+}
+
+function criarUmConfete(cores, container) {
+    const confete = document.createElement('div');
+    
+    // Escolhe uma cor aleatória do nosso array de Carnaval
+    const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
+    
+    // Define posições e tamanhos aleatórios para dar profundidade
+    const posicaoX = Math.random() * 100; // largura em %
+    const delay = Math.random() * 5; // delay para não caírem todos juntos
+    const duracao = Math.random() * 3 + 3; // entre 3 e 6 segundos para cair
+    const tamanho = Math.random() * 8 + 8; // entre 8px e 16px
+
+    // Estilização dinâmica via JavaScript
+    confete.style.position = 'fixed';
+    confete.style.zIndex = '9999';
+    confete.style.top = '-20px';
+    confete.style.left = `${posicaoX}%`;
+    confete.style.width = `${tamanho}px`;
+    confete.style.height = `${tamanho}px`;
+    confete.style.backgroundColor = corAleatoria;
+    confete.style.borderRadius = Math.random() > 0.5 ? '50%' : '3px'; // mistura círculos e quadrados
+    confete.style.opacity = Math.random();
+    
+    // Aplica a animação que criamos no CSS anterior, mas com tempos aleatórios
+    confete.style.animation = `fall ${duracao}s linear ${delay}s infinite`;
+
+    container.appendChild(confete);
+}
+
+/**
+ * 2. EFEITO LETREIRO NEON (Pulsar de Cores)
+ * Faz com que o texto de destaque mude de cor no ritmo da música (simulado).
+ */
+function efeitoLetreiroNeon() {
+    const destaque = document.querySelector('.highlight');
+    if (!destaque) return;
+
+    const coresNeon = ['#ff007f', '#00f0ff', '#ffd700'];
+    let indiceCor = 0;
+
+    // Muda a cor do texto e do brilho a cada 800 milissegundos
+    setInterval(() => {
+        const proximaCor = coresNeon[indiceCor];
+        destaque.style.color = proximaCor;
+        destaque.style.textShadow = `0 0 20px ${proximaCor}, 0 0 40px ${proximaCor}`;
+        
+        indiceCor = (indiceCor + 1) % coresNeon.length;
+    }, 800);
+}
+
+/**
+ * BONUS: INTERAÇÃO DE CLIQUE
+ * Cria uma "explosão" de confetes onde o usuário clicar na tela
+ */
+window.addEventListener('click', (evento) => {
+    const coresCarnaval = ['#ff007f', '#00f0ff', '#ffd700'];
+    
+    for (let i = 0; i < 10; i++) {
+        const confeteClique = document.createElement('div');
+        const cor = coresCarnaval[Math.floor(Math.random() * coresCarnaval.length)];
+        
+        confeteClique.style.position = 'fixed';
+        confeteClique.style.zIndex = '9999';
+        confeteClique.style.left = `${evento.clientX}px`;
+        confeteClique.style.top = `${evento.clientY}px`;
+        confeteClique.style.width = '10px';
+        confeteClique.style.height = '10px';
+        confeteClique.style.backgroundColor = cor;
+        confeteClique.style.borderRadius = '50%';
+        
+        // Direção aleatória para a explosão
+        const destinoX = (Math.random() - 0.5) * 200;
+        const destinoY = (Math.random() - 0.5) * 200;
+        
+        confeteClique.style.transition = 'all 0.6s ease-out';
+        
+        document.body.appendChild(confeteClique);
+        
+        // Força o navegador a renderizar antes de aplicar o efeito
+        setTimeout(() => {
+            confeteClique.style.transform = `translate(${destinoX}px, ${destinoY}px) scale(0)`;
+            confeteClique.style.opacity = '0';
+        }, 50);
+        
+        // Remove do HTML depois que a animação sumir
+        setTimeout(() => {
+            confeteClique.remove();
+        }, 600);
+    }
+});
